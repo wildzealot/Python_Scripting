@@ -1,21 +1,18 @@
 import os
 import sys
+import csv
+from tkinter import filedialog
+import pandas
 from tkinter import Tk
-#start in a parent directory and list all subfolders
-#pop up an explorer window to pick parent directory
 
-#Change the directory based upon where your files exist
-#User selects base directory which holds all logs.
-#The script walks the directory and runs the IOCs against any logs
-#handle errors when a file is NOT a log file such as evetn viewer file
 from tkinter.filedialog import askdirectory
 path = askdirectory(title='Select Folder') # shows dialog box and return the path
 print(path)  
 #IF YOU NEED TO SELECT THE FULL PATH NAME FOR A SINGLE DIRECTORY, USE THE LINE BELOW
 # user_input = 'C:/Users/ivory.wilds/Desktop/HAFNIUM EXCHANGE WORK/Bolton and Menk/exchangeLogs/logs/Exchange Logs/HttpProxy/Ecp'
 directory = os.listdir(path)
-#print(directory)
-FILENAMES=[]
+
+# Hafnium IOCs found at https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Sample%20Data/Feeds/MSTICIoCs-ExchangeServerVulnerabilitiesDisclosedMarch2021.csv
 searchstring = [
                 ".7z",
                 ".rar",
@@ -137,6 +134,10 @@ searchstring = [
                 "CMD=",
                 "Get-ExchangeServer.Identity",
                 #"/autodiscover",
+                "c103w-a.zip",
+                "dnl.zip",
+                "Od.lk",
+                "cdn.chatcdn.net/p?hig210305",
                 "Set-OabVirtualDirectory",
                 "/owa/auth/google.log",
                 "\owa\\auth\google.log",
@@ -247,13 +248,73 @@ searchstring = [
                 "211.56.98.146",
                 "5.254.43.18",
                 "80.92.205.81",
-                "5.189.162.164"]
-#The desired directory needs to be input here other wise it will just use the ROOT directory
-#list all folders and files in a directory
-#store all files with a certain extension in one list
+                "5.189.162.164",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\Current\\themes\\resources\logon.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\ecp\\auth\TimeoutLogout.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\ews\\333.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\OutlookUS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookiePL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplaceIO.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangPL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassPL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplacePL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLogsAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplaceAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLogsSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackAuthAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookPL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackAuthAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdIO.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLogsIO.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangAS.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackAuthDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplaceSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLogsAR.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackIdPL.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackOutLookES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplaceES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieES.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackReplaceEN.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackAuthSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangSE.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLangIO.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackCookieIO.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackLogsDA.aspx",
+                "\Exchange Server\V15\FrontEnd\HttpProxy\owa\\auth\ChackPassIO.aspx",
+                "/ecp/VDirMgmt/ResetVirtualDirectory.aspx",
+                "brian.krebsonsecurity.top",
+                "krebsonsecurity.top",
+                "jennifer.krebsonsecurity.top"]
+
+FILENAMES=[]
 for root, dirs, files in os.walk(path):
     for filename in files:
-        #the file extension needs to be changed depending upon desired file type
+        #the file extension needs to be changed depending upon desired file type (i.e. log, txt, docx)
         if(filename.endswith('.LOG')):
             FILENAMES.append(filename)
             for i in searchstring:
@@ -262,23 +323,13 @@ for root, dirs, files in os.walk(path):
                 if i in f.read():
                     print('found ' + i + ' in  %s' % longName )
             f.close()
-
-'''
-            #print(filename)
-            for folder in directory:
-                #print(fname)
-                #print(directory)
-                #if os.path.isfile(path + os.sep + fname + os.sep + filename):
-                # Full path
-                for i in searchstring:
-                    f = open(path + os.sep + fname + os.sep + filename, 'r')
-                    print(f)
-                    if i in f.read():
-                            #print(searchstring)
-                        print('found ' + i + ' in file %s' % f)
-                            #else:
-                            #print('string not found')
-                    f.close()
-'''
-
-             
+        #This section will check to see if there are any CSVs and if so, it will check them for IOC string matches
+        if(filename.endswith('.csv')):
+            FILENAMES.append(filename)
+            #print(FILENAMES)
+            longName = (root + os.sep + filename)
+            #print(longName)
+            df = pandas.read_csv(longName)
+            for i in searchstring:
+                if i in df.values:
+                    print('found ' + i + ' in  %s' % longName )
